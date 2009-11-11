@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<project name="FatJar FAST-Interpretype_fat.jar (experimental)" default="main" basedir=".">
+    <!-- this file was created by Fat-Jar Eclipse Plug-in -->
+    <!-- the ANT-Export is in a very early stage, so this -->
+    <!-- is only experimental, ANT 1.6 or above is        -->
+    <!-- required, feedback is always welcome:            -->
+    <!--       http://sourceforge.net/projects/fjep       -->
+    <!-- uncomment the following lines if using ANT outside Eclipse -->
+    <!--
+        <property name="fjepPath" value="reference:file:plugins/net.sf.fjep.fatjar_0.0.31/fatjar.jar"/>
+        <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}"/>
+        <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}"/>
+        <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}"/>
+        <typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}"/>
+        <typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}"/>
+    -->
+    <!-- uncomment the above lines to use ANT outside of Eclipse -->
+    <target name="main">
+        <fatjar.build output="FAST-Interpretype_fat.jar">
+            <fatjar.manifest mainclass="com.seanmadden.net.fast.SerialInterface" classpath="RXTXcomm.jar"/>
+            <fatjar.filesource path="C:\Documents and Settings\spmfa\Desktop\Workspace\FAST-Interpretype\bin" relpath=""/>
+            <fatjar.jarsource file="C:\Documents and Settings\spmfa\Desktop\Workspace\FAST-Interpretype\lib\RXTXcomm.jar" relpath=""/>
+            <fatjar.filesource path="C:\Documents and Settings\spmfa\Desktop\Workspace\FAST-Interpretype\lib\rxtxSerial.dll" relpath="rxtxSerial.dll"/>
+        </fatjar.build>
+    </target>
+</project>

@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Wed Nov 11 14:57:52 EST 2009
+onejar.license.required=true
+manifest.classpath=RXTXcomm.jar
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=FAST-Interpretype_fat.jar
+manifest.mergeall=true
+manifest.mainclass=com.seanmadden.net.fast.SerialInterface
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=<inc|FAST-Interpretype/lib>~rxtxSerial.dll
