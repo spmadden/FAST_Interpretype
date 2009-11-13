@@ -47,8 +47,22 @@ public class DataPacket {
 		System.out.println(getFlags());
 		if(getFlags().equals(userFlgsStr)){
 			userSwitch = true;
-			
 		}
+		
+		int checksum = getChecksum(data.substring(0, data.length() - 2 ));
+		if(!data.endsWith((char)checksum +"")){
+			System.out.println("Checksum does not match: "+ data);
+		}
+		
+		int pos = 7;
+		boolean cont = true;
+		while(cont){
+			if(data.startsWith(footerStr, pos++)){
+				cont = false;
+			}
+		}
+		data = data.substring(7, pos);
+		
 		return data;
 	}
 
@@ -58,14 +72,19 @@ public class DataPacket {
 	}
 	
 	public static String generateDataPayload(String data) {
+		int checksum = getChecksum(data);
+		data = headerStr + flagsStr + data + footerStr + (char) checksum;
+		return data;
+	}
+	
+	public static int getChecksum(String data){
 		int checksum = 0x65;
 		for (char c : data.toCharArray()) {
 			checksum += c;
 		}
 		checksum &= 0xFF;
 		checksum = 0x100 - checksum;
-		data = headerStr + flagsStr + data + footerStr + (char) checksum;
-		return data;
+		return checksum;
 	}
 	
 	public static  String toHexString(String data){
