@@ -25,7 +25,7 @@ package com.seanmadden.net.fast;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Scanner;
-import java.util.TooManyListenersException;
+import java.util.TooManyListenersException;  
 
 import gnu.io.*;
 
@@ -161,6 +161,6 @@ public class SerialInterface implements Runnable, SerialPortEventListener {
 	public void serialEvent(SerialPortEvent arg0) {
 		if(arg0.getEventType() == SerialPortEvent.DATA_AVAILABLE){
 			System.out.println(getDataFromPort());
-		}
+		} 
 	}
 }

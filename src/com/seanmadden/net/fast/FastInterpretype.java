@@ -21,8 +21,28 @@
 *
 */
 package com.seanmadden.net.fast;
+
+import com.seanmadden.net.fast.gui.MainWindow;
+import com.seanmadden.xmlconfiguration.XMLConfiguration;
+
 public class FastInterpretype {
 
+	private XMLConfiguration config = new XMLConfiguration();
+	
+	public FastInterpretype(){
+		config.setName("FastInterpretype"); 
+		if(!config.parseXMLFile("FastInterpretypeConfig.xml")){
+			System.out.println("Configuration not found!  Preloading settings.");
+			config.addValue("SerialPort", "COM!");
+			config.addValue("SerialBaud", 19200);
+			config.addValue("SerialParity", "none");
+			config.addValue("SerialBits", 8);
+			config.addValue("SerialStopBits", 1);
+			
+			config.addValue("OperatorName", "Operator");
+		}
+	}
+	
 	/**
 	 * Main Entrance to the Interpretype Software
 	 * 
@@ -30,7 +50,10 @@ public class FastInterpretype {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		MainWindow mw = new MainWindow(new FastInterpretype());
+		mw.pack();
+		mw.validate();
+		mw.setVisible(true);
 	}
 
 }

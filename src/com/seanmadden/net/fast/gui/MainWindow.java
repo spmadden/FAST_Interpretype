@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -33,7 +34,7 @@ import javax.swing.JWindow;
 
 import com.seanmadden.net.fast.FastInterpretype;
 
-public class MainWindow extends JWindow implements ActionListener{
+public class MainWindow extends JFrame implements ActionListener{
 	/**
 	 * 
 	 */
@@ -47,15 +48,18 @@ public class MainWindow extends JWindow implements ActionListener{
 	private JMenuItem toolOptionsConfig = new JMenuItem("Settings");
 	private JMenuItem toolHelpAbout = new JMenuItem("About");
 	
+	private FastInterpretype fi;
+	
 	{
 		toolbar.add(toolFile);
 		toolbar.add(toolOptions);
 		toolbar.add(toolHelp);
+		toolbar.setVisible(true);
 		
 		toolFile.add(toolFileExit);
 		toolOptions.add(toolOptionsConfig);
 		toolHelp.add(toolHelpAbout);
-		 
+		
 		toolFileExit.addActionListener(this);
 		toolFileExit.setActionCommand("ToolFileExit");
 		toolOptions.addActionListener(this);
@@ -67,13 +71,19 @@ public class MainWindow extends JWindow implements ActionListener{
 	
 	public MainWindow(FastInterpretype fi){
 		super();
-		add(toolbar, BorderLayout.NORTH);
 		setLayout(new BorderLayout());
+		add(toolbar, BorderLayout.NORTH);
+		setSize(200, 200);
+		this.fi = fi;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("ToolFileExit")){
+			
+		}else if(e.getActionCommand().equals("ToolOptions")){
+			
+		}else if(e.getActionCommand().equals("ToolHelpAbout")){
 			
 		}
 		
