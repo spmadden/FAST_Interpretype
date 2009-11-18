@@ -17,10 +17,11 @@
     <!-- uncomment the above lines to use ANT outside of Eclipse -->
     <target name="main">
         <fatjar.build output="FAST-Interpretype_fat.jar">
-            <fatjar.manifest mainclass="com.seanmadden.net.fast.SerialInterface" classpath="RXTXcomm.jar"/>
-            <fatjar.filesource path="C:\Documents and Settings\spmfa\Desktop\Workspace\FAST-Interpretype\bin" relpath=""/>
-            <fatjar.jarsource file="C:\Documents and Settings\spmfa\Desktop\Workspace\FAST-Interpretype\lib\RXTXcomm.jar" relpath=""/>
-            <fatjar.filesource path="C:\Documents and Settings\spmfa\Desktop\Workspace\FAST-Interpretype\lib\rxtxSerial.dll" relpath="rxtxSerial.dll"/>
+            <fatjar.manifest mainclass="com.seanmadden.net.fast.FastInterpretype" classpath="RXTXcomm.jar;SeansLibs-Java.jar"/>
+            <fatjar.filesource path="bin" relpath=""/>
+            <fatjar.jarsource file="lib\RXTXcomm.jar" relpath=""/>
+        	<fatjar.jarsource file="SeansLibs-java.jar" relpath=""/>
+            <fatjar.filesource path="lib\rxtxSerial.dll" relpath="rxtxSerial.dll"/>
         </fatjar.build>
     </target>
 </project>

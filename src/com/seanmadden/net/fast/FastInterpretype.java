@@ -22,12 +22,19 @@
 */
 package com.seanmadden.net.fast;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JOptionPane;
+
 import com.seanmadden.net.fast.gui.MainWindow;
 import com.seanmadden.xmlconfiguration.XMLConfiguration;
 
-public class FastInterpretype {
+public class FastInterpretype implements Observer{
 
 	private XMLConfiguration config = new XMLConfiguration();
+	private SerialInterface si = new SerialInterface();
+	private MainWindow mw = null;
 	
 	public FastInterpretype(){
 		config.setName("FastInterpretype"); 
@@ -41,6 +48,17 @@ public class FastInterpretype {
 			
 			config.addValue("OperatorName", "Operator");
 		}
+		si.open();
+		si.addObserver(this);
+		mw = new MainWindow(this);
+		String username = JOptionPane.showInputDialog("What is your name?");
+		mw.setLocalUserName(username);
+		mw.validate();
+		mw.setVisible(true);
+	}
+	
+	public void acceptTextSent(String text){
+		si.sendDataToPort(text);
 	}
 	
 	/**
@@ -49,10 +67,13 @@ public class FastInterpretype {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		MainWindow mw = new MainWindow(new FastInterpretype());
-		mw.validate();
-		mw.setVisible(true);
+		FastInterpretype fi = new FastInterpretype();
+		
+	}
+
+	public void update(Observable o, Object arg) {
+		mw.acceptText((String)arg, "Remote Person"); 
+		
 	}
 
 }

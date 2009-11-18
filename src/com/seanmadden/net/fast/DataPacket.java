@@ -23,10 +23,11 @@
 package com.seanmadden.net.fast;
 
 public class DataPacket {
-	private String payload = "";
 	private String data = "";
-	private static char[] header = { 0xAA, 0xAA, 0xFF, 0xFF, 0x14 };
-	private static String headerStr = String.copyValueOf(header);
+	private static char[] sendHeader = { 0xAA, 0xAA, 0xFF, 0xFF, 0x14};
+	private static String sendHeaderStr = String.copyValueOf(sendHeader);
+	private static char[] recvHeader = { 0xAA, 0xAA, 0xFF, 0xFF, 0x01};
+	private static String recvHeaderStr = String.copyValueOf(recvHeader);
 	private static char[] flags = { 0x00, 0x00 };
 	private static String flagsStr = String.copyValueOf(flags);
 	private static char[] userFlags = {0x03, 0x07};
@@ -37,31 +38,34 @@ public class DataPacket {
 	private boolean userSwitch = false;
 
 	public DataPacket(String data) {
-		this.payload = data;
+		this.data = data;
 	}
 
 	public String parseDataPacket() {
-		if (!data.startsWith(headerStr)) {
+		if(data.length() < 11){
 			return null;
 		}
+		if (!data.startsWith(recvHeaderStr)) {
+			return null;
+		}
+		if(!data.substring(data.length()-4, data.length()-1).equals(footerStr)){
+			return null;
+		}
+		
+		
+		
 		System.out.println(getFlags());
 		if(getFlags().equals(userFlgsStr)){
 			userSwitch = true;
 		}
 		
-		int checksum = getChecksum(data.substring(0, data.length() - 2 ));
-		if(!data.endsWith((char)checksum +"")){
+		if(!validateChecksum(data)){
 			System.out.println("Checksum does not match: "+ data);
 		}
 		
-		int pos = 7;
-		boolean cont = true;
-		while(cont){
-			if(data.startsWith(footerStr, pos++)){
-				cont = false;
-			}
-		}
-		data = data.substring(7, pos);
+		
+		
+		data = data.substring(7, data.length()-4);
 		
 		return data;
 	}
@@ -72,13 +76,13 @@ public class DataPacket {
 	}
 	
 	public static String generateDataPayload(String data) {
-		int checksum = getChecksum(data);
-		data = headerStr + flagsStr + data + footerStr + (char) checksum;
+		data = sendHeaderStr + flagsStr + data + footerStr;
+		data += (char) getChecksum(data);
 		return data;
 	}
 	
 	public static int getChecksum(String data){
-		int checksum = 0x65;
+		int checksum = 0x00;
 		for (char c : data.toCharArray()) {
 			checksum += c;
 		}
@@ -87,7 +91,15 @@ public class DataPacket {
 		return checksum;
 	}
 	
-	public static  String toHexString(String data){
+	public static boolean validateChecksum(String data){
+		int checksum = 0x00;
+		for (char c : data.toCharArray()) {
+			checksum += c;
+		}
+		return ((checksum & 0xFF) == 0x0);
+	}
+	
+	public static String toHexString(String data){
 		String ret = "";
 		for(char c : data.toCharArray()){
 			ret += "0x" + Integer.toHexString((int)c) + " ";

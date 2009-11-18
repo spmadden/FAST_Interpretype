@@ -24,8 +24,8 @@ package com.seanmadden.net.fast;
 
 import java.io.*;
 import java.util.Enumeration;
+import java.util.Observable;
 import java.util.Scanner;
-import java.util.TooManyListenersException;  
 
 import gnu.io.*;
 
@@ -34,7 +34,7 @@ import gnu.io.*;
  * 
  * @author Sean P Madden
  */
-public class SerialInterface implements Runnable, SerialPortEventListener {
+public class SerialInterface extends Observable implements SerialPortEventListener {
 	private String comPort = null;
 	private CommPortIdentifier comID;
 	private BufferedReader portIn;
@@ -43,6 +43,8 @@ public class SerialInterface implements Runnable, SerialPortEventListener {
 	
 	private boolean openable = false;
 	private boolean portOpen = false;
+	
+	private String buildBuf = "";
 
 	public SerialInterface() {
 		String os = System.getProperty("os.name").toLowerCase();
@@ -121,16 +123,12 @@ public class SerialInterface implements Runnable, SerialPortEventListener {
 		inter.close();
 	}
 
-	public void run() {
-		// TODO Auto-generated method stub
-
-	}
-	
 	public void sendDataToPort(String data){
 		if(!portOpen){
 			System.out.println("Port was unable to be opened.");
 			return;
 		}
+		data = DataPacket.generateDataPayload(data);
 		System.out.println("Writing '" + data + "'");
 		System.out.println(DataPacket.toHexString(data));
 		try {
@@ -148,19 +146,29 @@ public class SerialInterface implements Runnable, SerialPortEventListener {
 		try {
 			if(portIn.ready()){
 				int num = portIn.read(arr);
-				DataPacket pkt = new DataPacket(String.copyValueOf(arr, 0, num));
-				System.out.println(pkt.parseDataPacket());
+				buildBuf += String.copyValueOf(arr, 0, num);
+				DataPacket pkt = new DataPacket(buildBuf);
+				toRet = pkt.parseDataPacket();
+				if(toRet != null){
+					buildBuf = "";
+					return toRet;
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			buildBuf = "";
 		}
-		
-		return toRet;
+		return null;
 	}
 	
 	public void serialEvent(SerialPortEvent arg0) {
 		if(arg0.getEventType() == SerialPortEvent.DATA_AVAILABLE){
-			System.out.println(getDataFromPort());
+			String result = getDataFromPort();
+			if(result != null){
+				setChanged();
+				notifyObservers(result);
+				clearChanged();
+			}
 		} 
 	}
 }
