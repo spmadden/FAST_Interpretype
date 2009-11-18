@@ -26,15 +26,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JWindow;
+import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import com.seanmadden.net.fast.FastInterpretype;
 
-public class MainWindow extends JFrame implements ActionListener{
+public class MainWindow extends JFrame implements ActionListener, DocumentListener{
 	/**
 	 * 
 	 */
@@ -47,6 +47,11 @@ public class MainWindow extends JFrame implements ActionListener{
 	private JMenuItem toolFileExit = new JMenuItem("Exit");
 	private JMenuItem toolOptionsConfig = new JMenuItem("Settings");
 	private JMenuItem toolHelpAbout = new JMenuItem("About");
+	
+	private JTextArea mainTextLog = new JTextArea();
+	private JPanel lowerPanel = new JPanel();
+	private JTextArea sendTextArea = new JTextArea();
+	private JButton sendTextButton = new JButton("Send");
 	
 	private FastInterpretype fi;
 	
@@ -67,13 +72,31 @@ public class MainWindow extends JFrame implements ActionListener{
 		toolHelpAbout.addActionListener(this);
 		toolHelpAbout.setActionCommand("ToolHelpAbout");
 		
+		lowerPanel.setLayout(new BorderLayout());
+		lowerPanel.add(sendTextArea, BorderLayout.CENTER);
+		lowerPanel.add(sendTextButton, BorderLayout.EAST);
+		sendTextButton.setSize(270, 50);
+		sendTextArea.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+		sendTextArea.getDocument().addDocumentListener(this);
+		
+		mainTextLog.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+		mainTextLog.setAutoscrolls(true);
+		mainTextLog.setLineWrap(true);
+		mainTextLog.setEditable(false);
+		mainTextLog.setWrapStyleWord(true);
+		
+		
 	}
 	
 	public MainWindow(FastInterpretype fi){
 		super();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		setLayout(new BorderLayout());
 		add(toolbar, BorderLayout.NORTH);
-		setSize(200, 200);
+		add(mainTextLog, BorderLayout.CENTER);
+		add(lowerPanel, BorderLayout.SOUTH);
+		setSize(500, 400);
 		this.fi = fi;
 	}
 
@@ -85,7 +108,27 @@ public class MainWindow extends JFrame implements ActionListener{
 			
 		}else if(e.getActionCommand().equals("ToolHelpAbout")){
 			
+		}else if(e.getActionCommand().equals("SendTextButton")){
+			
 		}
+		
+	}
+
+	public void changedUpdate(DocumentEvent arg0) {
+		try {
+			String text = arg0.getDocument().getText(0, arg0.getDocument().getLength());
+			System.out.println(text.endsWith("\n"));
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void insertUpdate(DocumentEvent arg0) {
+		
+	}
+
+	public void removeUpdate(DocumentEvent arg0) {
 		
 	}
 	

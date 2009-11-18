@@ -51,7 +51,6 @@ public class FastInterpretype {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		MainWindow mw = new MainWindow(new FastInterpretype());
-		mw.pack();
 		mw.validate();
 		mw.setVisible(true);
 	}
