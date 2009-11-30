@@ -63,10 +63,7 @@ public class DataPacket {
 			System.out.println("Checksum does not match: "+ data);
 		}
 		
-		
-		
 		data = data.substring(7, data.length()-4);
-		
 		return data;
 	}
 

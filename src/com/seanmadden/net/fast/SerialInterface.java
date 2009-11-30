@@ -22,12 +22,19 @@
  */
 package com.seanmadden.net.fast;
 
-import java.io.*;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Scanner;
-
-import gnu.io.*;
 
 /**
  * [Insert class description here]
