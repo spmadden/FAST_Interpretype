@@ -40,7 +40,7 @@ public class FastInterpretype implements Observer{
 		config.setName("FastInterpretype"); 
 		if(!config.parseXMLFile("FastInterpretypeConfig.xml")){
 			System.out.println("Configuration not found!  Preloading settings.");
-			config.addValue("SerialPort", "COM!");
+			config.addValue("SerialPort", "COM1");
 			config.addValue("SerialBaud", 19200);
 			config.addValue("SerialParity", "none");
 			config.addValue("SerialBits", 8);
