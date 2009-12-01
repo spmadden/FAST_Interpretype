@@ -30,13 +30,16 @@ public class DataPacket {
 	private static String recvHeaderStr = String.copyValueOf(recvHeader);
 	private static char[] flags = { 0x00, 0x00 };
 	private static String flagsStr = String.copyValueOf(flags);
-	private static char[] userFlags = {0x03, 0x07};
-	private static String userFlgsStr = String.copyValueOf(userFlags);
+	private static char[] userTalkingFlags = {0x03, 0x07};
+	private static String userTalkingFlgsStr = String.copyValueOf(userTalkingFlags);
+	private static char[] userSignedOnFlags = {0x03, 0x08};
+	private static String userSignedOnFlagsStr = String.copyValueOf(userSignedOnFlags);
+	private static char[] clearConvoFlags = {0x02, 0x01};
+	private static String clearConvoFlagsStr = String.copyValueOf(clearConvoFlags);
+	private static String clearConvoString = "clear conversation.";
 	private static char[] footer = { 0x00, 0xFF, 0x00 };
 	private static String footerStr = String.copyValueOf(footer);
 	
-	private boolean userSwitch = false;
-
 	public DataPacket(String data) {
 		this.data = data;
 	}
@@ -52,30 +55,41 @@ public class DataPacket {
 			return null;
 		}
 		
-		
-		
-		System.out.println(getFlags());
-		if(getFlags().equals(userFlgsStr)){
-			userSwitch = true;
-		}
-		
 		if(!validateChecksum(data)){
 			System.out.println("Checksum does not match: "+ data);
 		}
 		
-		data = data.substring(7, data.length()-4);
-		return data;
+		String newData = data.substring(7, data.length()-4);
+		return newData;
 	}
 
 	
 	private String getFlags(){
-		return data.substring(5, 6);
+		return data.substring(5, 7);
 	}
 	
 	public static String generateDataPayload(String data) {
 		data = sendHeaderStr + flagsStr + data + footerStr;
 		data += (char) getChecksum(data);
 		return data;
+	}
+	
+	public static String generateUserPayload(String username){
+		username = sendHeaderStr + userTalkingFlgsStr + username + footerStr;
+		username += (char) getChecksum(username);
+		return username;
+	}
+	
+	public static String generateSignedOnPayload(String username){
+		username = sendHeaderStr + userSignedOnFlagsStr + username + footerStr;
+		username += (char) getChecksum(username);
+		return username;
+	}
+	
+	public static String generateClearConvoPayload(){
+		String username = sendHeaderStr + clearConvoFlagsStr + clearConvoString + footerStr;
+		username += (char) getChecksum(username);
+		return username;
 	}
 	
 	public static int getChecksum(String data){
@@ -103,5 +117,13 @@ public class DataPacket {
 		}
 		
 		return ret;
+	}
+	
+	public boolean directionSwitched(){
+		return getFlags().equals(userTalkingFlgsStr);
+	}
+	
+	public boolean signedOn(){
+		return getFlags().equals(userSignedOnFlagsStr);
 	}
 }

@@ -131,34 +131,34 @@ public class SerialInterface extends Observable implements SerialPortEventListen
 	}
 
 	public void sendDataToPort(String data){
+		sendRawDataToPort(DataPacket.generateDataPayload(data));
+	}
+	
+	public void sendRawDataToPort(String rawData){
 		if(!portOpen){
 			System.out.println("Port was unable to be opened.");
 			return;
 		}
-		data = DataPacket.generateDataPayload(data);
-		System.out.println("Writing '" + data + "'");
-		System.out.println(DataPacket.toHexString(data));
+		System.out.println("Writing '" + rawData + "'");
+		System.out.println(DataPacket.toHexString(rawData));
 		try {
-			portOut.write(data);
+			portOut.write(rawData);
 			portOut.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
-	public String getDataFromPort(){
+	public DataPacket getDataFromPort(){
 		char[] arr = new char[255];
-		String toRet = "";
 		try {
 			if(portIn.ready()){
 				int num = portIn.read(arr);
 				buildBuf += String.copyValueOf(arr, 0, num);
 				DataPacket pkt = new DataPacket(buildBuf);
-				toRet = pkt.parseDataPacket();
-				if(toRet != null){
+				if(pkt.parseDataPacket() != null){
 					buildBuf = "";
-					return toRet;
+					return pkt;
 				}
 			}
 		} catch (IOException e) {
@@ -170,7 +170,7 @@ public class SerialInterface extends Observable implements SerialPortEventListen
 	
 	public void serialEvent(SerialPortEvent arg0) {
 		if(arg0.getEventType() == SerialPortEvent.DATA_AVAILABLE){
-			String result = getDataFromPort();
+			DataPacket result = getDataFromPort();
 			if(result != null){
 				setChanged();
 				notifyObservers(result);

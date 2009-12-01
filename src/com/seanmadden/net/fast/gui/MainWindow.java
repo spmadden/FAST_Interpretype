@@ -24,6 +24,8 @@ package com.seanmadden.net.fast.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -42,6 +44,7 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 
 	private JMenuItem toolFileExit = new JMenuItem("Exit");
 	private JMenuItem toolOptionsConfig = new JMenuItem("Settings");
+	private JMenuItem toolOptionsClear = new JMenuItem("Clear Windows");
 	private JMenuItem toolHelpAbout = new JMenuItem("About");
 
 	private JTextArea mainTextLog = new JTextArea();
@@ -62,12 +65,17 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 
 		toolFile.add(toolFileExit);
 		toolOptions.add(toolOptionsConfig);
+		toolOptions.add(toolOptionsClear);
 		toolHelp.add(toolHelpAbout);
 
 		toolFileExit.addActionListener(this);
 		toolFileExit.setActionCommand("ToolFileExit");
 		toolOptions.addActionListener(this);
 		toolOptions.setActionCommand("ToolOptions");
+		toolOptionsClear.addActionListener(this);
+		toolOptionsClear.setActionCommand("ToolClear");
+		toolOptionsConfig.addActionListener(this);
+		toolOptionsConfig.setActionCommand("ToolConfig");
 		toolHelpAbout.addActionListener(this);
 		toolHelpAbout.setActionCommand("ToolHelpAbout");
 
@@ -108,11 +116,12 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ToolFileExit")) {
-			this.dispose();
-		} else if (e.getActionCommand().equals("ToolOptions")) {
-
+			System.exit(0);
+		} else if (e.getActionCommand().equals("ToolOptionsConfig")) {
+		} else if (e.getActionCommand().equals("ToolClear")) {
+			fi.clearWindows();
 		} else if (e.getActionCommand().equals("ToolHelpAbout")) {
-
+			new AboutWindow();
 		} else if (e.getActionCommand().equals("SendTextButton")) {
 			System.out.println("Send button clicked.");
 			sendTextToFI();
@@ -142,8 +151,32 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 		mainTextLog.append(username + ": \t" + line + "\n");
 	}
 
+	public void acceptText(String line) {
+		mainTextLog.append(line);
+	}
+
 	public void setLocalUserName(String username) {
 		this.localUserName = username;
+	}
+	
+	public String getLocalUserName(){
+		return localUserName;
+	}
+	
+	public void clearWindow(){
+		mainTextLog.setText("");
+	}
+	
+	public void saveWindowToFile(String filename){
+		try {
+			FileWriter file = new FileWriter(filename);
+			file.write(mainTextLog.getText());
+			file.close();
+			clearWindow();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }
