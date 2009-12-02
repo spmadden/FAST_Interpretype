@@ -97,26 +97,14 @@ public class FastInterpretype implements Observer {
 						"Save before clearing?",
 						JOptionPane.YES_NO_CANCEL_OPTION);
 		if (selected == JOptionPane.YES_OPTION) {
-			JFileChooser jfc = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					"Text Files", "txt");
-			jfc.setFileFilter(filter);
-			int retVal = jfc.showSaveDialog(null);
-			if (retVal == JFileChooser.APPROVE_OPTION) {
-				String filename = jfc.getSelectedFile().getPath();
-				mw.saveWindowToFile(filename);
-				mw.clearWindow();
-				si.sendRawDataToPort(DataPacket.generateClearConvoPayload());
-				windowCleared = true;
-			}
+			windowCleared = saveLogToFile();
 		} else if (selected == JOptionPane.NO_OPTION) {
-			// clear windows
-			si.sendRawDataToPort(DataPacket.generateClearConvoPayload());
-			mw.clearWindow();
 			windowCleared = true;
 		}
 
 		if (windowCleared) {
+			si.sendRawDataToPort(DataPacket.generateClearConvoPayload());
+			mw.clearWindow();
 			String username = JOptionPane.showInputDialog("What is your name?");
 			si.sendRawDataToPort(DataPacket.generateSignedOnPayload(username));
 			mw.acceptText(username + " (you) has signed on.\n");
@@ -135,6 +123,20 @@ public class FastInterpretype implements Observer {
 		} else {
 			mw.acceptText(dp.parseDataPacket(), remoteUser);
 		}
+	}
+
+	public boolean saveLogToFile() {
+		JFileChooser jfc = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(
+				"Text Files", "txt");
+		jfc.setFileFilter(filter);
+		int retVal = jfc.showSaveDialog(null);
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			String filename = jfc.getSelectedFile().getPath();
+			mw.saveWindowToFile(filename);
+			return true;
+		}
+		return false;
 	}
 
 }

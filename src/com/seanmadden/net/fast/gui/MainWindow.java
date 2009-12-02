@@ -43,8 +43,9 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 	private JMenu toolHelp = new JMenu("Help");
 
 	private JMenuItem toolFileExit = new JMenuItem("Exit");
+	private JMenuItem toolFileNewSession = new JMenuItem("New Session");
+	private JMenuItem toolFileSaveSession = new JMenuItem("Save Session");
 	private JMenuItem toolOptionsConfig = new JMenuItem("Settings");
-	private JMenuItem toolOptionsClear = new JMenuItem("Clear Windows");
 	private JMenuItem toolHelpAbout = new JMenuItem("About");
 
 	private JTextArea mainTextLog = new JTextArea();
@@ -63,17 +64,20 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 		toolbar.add(toolHelp);
 		toolbar.setVisible(true);
 
+		toolFile.add(toolFileNewSession);
+		toolFile.add(toolFileSaveSession);
 		toolFile.add(toolFileExit);
 		toolOptions.add(toolOptionsConfig);
-		toolOptions.add(toolOptionsClear);
 		toolHelp.add(toolHelpAbout);
 
 		toolFileExit.addActionListener(this);
 		toolFileExit.setActionCommand("ToolFileExit");
 		toolOptions.addActionListener(this);
 		toolOptions.setActionCommand("ToolOptions");
-		toolOptionsClear.addActionListener(this);
-		toolOptionsClear.setActionCommand("ToolClear");
+		toolFileNewSession.addActionListener(this);
+		toolFileNewSession.setActionCommand("ToolNewSession");
+		toolFileSaveSession.addActionListener(this);
+		toolFileSaveSession.setActionCommand("ToolSaveSession");
 		toolOptionsConfig.addActionListener(this);
 		toolOptionsConfig.setActionCommand("ToolConfig");
 		toolHelpAbout.addActionListener(this);
@@ -118,13 +122,16 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 		if (e.getActionCommand().equals("ToolFileExit")) {
 			System.exit(0);
 		} else if (e.getActionCommand().equals("ToolOptionsConfig")) {
-		} else if (e.getActionCommand().equals("ToolClear")) {
+			fi.configEditWindow();
+		} else if (e.getActionCommand().equals("ToolNewSession")) {
 			fi.clearWindows();
 		} else if (e.getActionCommand().equals("ToolHelpAbout")) {
 			new AboutWindow();
 		} else if (e.getActionCommand().equals("SendTextButton")) {
 			System.out.println("Send button clicked.");
 			sendTextToFI();
+		}else if(e.getActionCommand().equals("ToolSaveSession")){
+			fi.saveLogToFile();
 		}
 
 	}
@@ -172,7 +179,6 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 			FileWriter file = new FileWriter(filename);
 			file.write(mainTextLog.getText());
 			file.close();
-			clearWindow();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
