@@ -1,27 +1,45 @@
 <?xml version="1.0"?>
-<project name="FatJar FAST-Interpretype_fat.jar (experimental)" default="main" basedir=".">
-    <!-- this file was created by Fat-Jar Eclipse Plug-in -->
-    <!-- the ANT-Export is in a very early stage, so this -->
-    <!-- is only experimental, ANT 1.6 or above is        -->
-    <!-- required, feedback is always welcome:            -->
-    <!--       http://sourceforge.net/projects/fjep       -->
-    <!-- uncomment the following lines if using ANT outside Eclipse -->
-    <!--
-        <property name="fjepPath" value="reference:file:plugins/net.sf.fjep.fatjar_0.0.31/fatjar.jar"/>
-        <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}"/>
-        <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}"/>
-        <typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}"/>
-    -->
-    <!-- uncomment the above lines to use ANT outside of Eclipse -->
-    <target name="main">
-        <fatjar.build output="FAST-Interpretype_fat.jar">
-            <fatjar.manifest mainclass="com.seanmadden.net.fast.FastInterpretype" classpath="RXTXcomm.jar;SeansLibs-Java.jar"/>
-            <fatjar.filesource path="bin" relpath=""/>
-            <fatjar.jarsource file="lib\RXTXcomm.jar" relpath=""/>
-        	<fatjar.jarsource file="SeansLibs-java.jar" relpath=""/>
-            <fatjar.filesource path="lib\rxtxSerial.dll" relpath="rxtxSerial.dll"/>
-        </fatjar.build>
-    </target>
+<project name="Fast_Interpretype" default="main" basedir=".">
+	<property name="build" location="bin" />
+	<property name="src" location="src" />
+
+	<target name="main" depends="jar,clean">
+
+	</target>
+
+	<target name="signjar" >
+		<signjar jar="Fast-Interpretype.jar" alias="seanmadden.net" storepass="pdntspa" />
+	</target>
+	
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+	
+	<target name="build">
+		<delete dir="${build}" />
+		<mkdir dir="${build}" />
+		<javac 
+			srcdir="${src}" 
+			destdir="${build}"
+			classpath="lib/RXTXcomm.jar;lib/SeansLibs-Java.jar"
+		/>
+	</target>
+
+	<target name="jar" depends="build">
+		<unjar src="lib/RXTXcomm.jar" dest="${build}"/>
+		<unjar src="lib/SeansLibs-Java.jar" dest="${build}" />
+		<jar jarfile="Fast-Interpretype.jar" basedir="${build}">
+			<fileset dir="${build}" />
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Implementation-Vendor" value="Sean Madden Enterprises" />
+				<attribute name="Implementation-Title" value="FastInterpretype" />
+				<attribute name="Implementation-Version" value="1.0.0beta1" />
+
+				<attribute name="Main-Class" value="com.seanmadden.net.fast.FastInterpretype" />
+				<attribute name="Class-Path" value="RXTXcomm.jar SeansLibs-Java.jar" />
+			</manifest>
+		</jar>
+	</target>
+
 </project>
