@@ -22,38 +22,61 @@
  */
 package com.seanmadden.net.fast;
 
-import java.util.Observable;
-import java.util.Observer;
+import java.io.*;
+import java.util.*;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.seanmadden.net.fast.gui.MainWindow;
-import com.seanmadden.xmlconfiguration.XMLConfiguration;
 
 public class FastInterpretype implements Observer {
 
-	private XMLConfiguration config = new XMLConfiguration();
-	private SerialInterface si = new SerialInterface();
+	private JSONObject config = new JSONObject();
+	private SerialInterface si = null;
 	private MainWindow mw = null;
+
+	private String filename = "FastInterpretype.json";
 
 	private String remoteUser = "";
 	private boolean needToSendDir = true;
 
 	public FastInterpretype() {
-		config.setName("FastInterpretype");
-		if (!config.parseXMLFile("FastInterpretypeConfig.xml")) {
-			System.out
-					.println("Configuration not found!  Preloading settings.");
-			config.addValue("SerialPort", "COM1");
-			config.addValue("SerialBaud", 19200);
-			config.addValue("SerialParity", "none");
-			config.addValue("SerialBits", 8);
-			config.addValue("SerialStopBits", 1);
 
-			config.addValue("OperatorName", "Operator");
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader(filename));
+			String line = "", jsonData = "";
+			while ((line = reader.readLine()) != null) {
+				jsonData += line;
+			}
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		System.out.println("Configuration not found!  Preloading settings.");
+		try {
+			config.put("SerialPort", "COM1");
+			config.put("SerialBaud", 19200);
+			config.put("SerialParity", 0);
+			config.put("SerialBits", 8);
+			config.put("SerialStopBits", 1);
+			config.put("StringBreakLength", 50);
+			config.put("OperatorName", "Operator");
+			FileWriter writer = new FileWriter(filename);
+			config.write(writer);
+			writer.flush();
+			writer.close();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		si = new SerialInterface(config);
 		si.open();
 		si.addObserver(this);
 		mw = new MainWindow(this);
@@ -67,15 +90,30 @@ public class FastInterpretype implements Observer {
 	}
 
 	public void acceptTextSent(String text) {
-		if (needToSendDir) {
-			si.sendRawDataToPort(DataPacket.generateUserPayload(mw
-					.getLocalUserName()));
+		try {
+			int stringBreakLength = config.getInt("StringBreakLength");
+			if (text.length() > stringBreakLength) {
+				int chunks = text.length() / stringBreakLength;
+				for (int i = 0; i < chunks; i++) {
+					acceptTextSent(text.substring(stringBreakLength * i,
+							stringBreakLength * (i + 1)));
+				}
+				acceptTextSent(text.substring(stringBreakLength * chunks));
+				return;
+			}
+			if (needToSendDir) {
+				si.sendRawDataToPort(DataPacket.generateUserPayload(mw
+						.getLocalUserName()));
+			}
+			si.sendDataToPort(text);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		si.sendDataToPort(text);
 	}
 
 	public void configEditWindow() {
-		config.editUsingGui();
+		JFrame frame = new JFrame();
+
 	}
 
 	/**

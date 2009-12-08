@@ -21,13 +21,12 @@
 		<javac 
 			srcdir="${src}" 
 			destdir="${build}"
-			classpath="lib/RXTXcomm.jar;lib/SeansLibs-Java.jar"
+			classpath="lib/RXTXcomm.jar"
 		/>
 	</target>
 
 	<target name="jar" depends="build">
 		<unjar src="lib/RXTXcomm.jar" dest="${build}"/>
-		<unjar src="lib/SeansLibs-Java.jar" dest="${build}" />
 		<jar jarfile="Fast-Interpretype.jar" basedir="${build}">
 			<fileset dir="${build}" />
 			<manifest>

@@ -36,6 +36,9 @@ import java.util.Enumeration;
 import java.util.Observable;
 import java.util.Scanner;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * [Insert class description here]
  * 
@@ -53,7 +56,17 @@ public class SerialInterface extends Observable implements SerialPortEventListen
 	
 	private String buildBuf = "";
 
-	public SerialInterface() {
+	private JSONObject config = null;
+	
+	public SerialInterface(JSONObject config) {
+		this.config = config;
+		try {
+			String str = config.getString("SerialPort");
+			comPort = str;
+			return;
+		} catch (JSONException e) {
+		}
+			
 		String os = System.getProperty("os.name").toLowerCase();
 		if (os.startsWith("win")) {
 			comPort = "COM1";
@@ -92,8 +105,13 @@ public class SerialInterface extends Observable implements SerialPortEventListen
 			portOut = new BufferedWriter(new OutputStreamWriter(thePort.getOutputStream()));
 			thePort.addEventListener(this);
 			thePort.notifyOnDataAvailable(true);
-			thePort.setSerialPortParams(19200, SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+			
+			int baud = config.getInt("SerialBaud");
+			int bits = config.getInt("SerialBits");
+			int stop = config.getInt("SerialStopBits");
+			int parity = config.getInt("SerialParity");
+			
+			thePort.setSerialPortParams(baud, bits, stop, parity);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -106,7 +124,7 @@ public class SerialInterface extends Observable implements SerialPortEventListen
 	}
 
 	public static void main(String[] args) {
-		SerialInterface inter = new SerialInterface();
+		SerialInterface inter = new SerialInterface(new JSONObject());
 		inter.open();
 		
 		System.out.println("Welcome.  Commands with 'help'");
