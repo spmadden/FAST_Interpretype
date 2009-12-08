@@ -46,7 +46,8 @@ public class AboutWindow extends JFrame implements ActionListener {
 			+ "GNU General Public License for more details. \n\n"
 			+ "You should have received a copy of the GNU General Public License "
 			+ "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n\n"
-			+ "This software is supported by the FAST Helpdesk 475-FAST (3278)";
+			+ "This software is supported by the FAST Helpdesk 475-FAST (3278)\n\n\n"
+			+ "Version 2.0";
 
 	public AboutWindow() {
 		setLayout(new BorderLayout());

@@ -121,7 +121,7 @@ public class MainWindow extends JFrame implements ActionListener, KeyListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("ToolFileExit")) {
 			System.exit(0);
-		} else if (e.getActionCommand().equals("ToolOptionsConfig")) {
+		} else if (e.getActionCommand().equals("ToolConfig")) {
 			fi.configEditWindow();
 		} else if (e.getActionCommand().equals("ToolNewSession")) {
 			fi.clearWindows();

@@ -63,6 +63,7 @@ public class SerialInterface extends Observable implements SerialPortEventListen
 		try {
 			String str = config.getString("SerialPort");
 			comPort = str;
+			openable = true;
 			return;
 		} catch (JSONException e) {
 		}
